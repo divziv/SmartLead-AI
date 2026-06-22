@@ -1,0 +1,6 @@
+{
+  "name": "IDBI SmartLead AI",
+  "description": "AI-Powered Behavioral Lending & Financial Inclusion Platform for IDBI Innovate 2026. Transforming raw transaction data into credit-worthy leads using transaction intelligence, explainable AI, and accessibility-first design.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
