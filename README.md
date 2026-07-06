@@ -3,10 +3,35 @@
 
 ---
 
+## 🏆 Hackathon Track Selected
+### **Alternative Credit Appraisal Engine (UPI-Powered Behavioral Underwriting)**
+This platform acts as an alternative credit underwriting engine designed to assess the creditworthiness of unbanked and under-banked Indian demographics (Gig workers, farmers, independent freelancers, and students) who lack traditional credit histories. By analyzing alternative digital footprints—specifically raw UPI transaction streams—it builds robust, audit-ready behavioral scores alongside real-time explainable AI appraisal summaries.
+
+---
+
 ## 📌 Project Overview & Tagline
 **"Unlocking Credit for the Next Billion: UPI-Powered Behavioral Underwriting & Accessible Voice-Enabled Banking."**
 
 **IDBI SmartLead AI** is a state-of-the-art fintech credit decisioning platform engineered for the **IDBI Innovate Hackathon 2026**. It appraises underserved micro-segments (including Gig Workers, Farmers, Independent Freelancers, and Students) by parsing live or synthetic UPI transaction streams to build robust alternative credit profiles. It uses Gemini AI for explainable decisioning, paired with high-performance Python microservices and accessible frontends.
+
+---
+
+## 🚀 Key Platform Features
+
+### 1. Alternative Credit & Behavioral Scoring Engine
+* **UPI Stream Assessment**: Parses real-time transaction narratives to identify gig wages, seasonal agri-yields, and steady stipends versus debt or high-risk spending.
+* **Psychometric Risk Modeling**: Grades customers on income stability, financial discipline, digital tech adoption, and seasonal consistency.
+
+### 2. Interactive Sandbox Playbook & Simulation Toolkit
+* **Live Stream Simulation**: Instantly introduce new credits (such as gig bonuses, regional stipends) or debits (such as PG rent, EMIs) to view real-time score recalculation.
+* **Multi-Selection Checkboxes**: Fully interactive stream table with custom multi-selection controls.
+* **Streamlined Batch Operations**: Delete multiple selected transaction entries simultaneously with single-click batch delete actions.
+* **Monthly Velocity Sparklines**: Integrated beautiful inline visual sparklines powered by `recharts` tracking monthly transaction velocity trends for the active profile.
+* **Underwriting Data Portability**: Added an instant **Download Report** feature to download complete simulated transaction arrays, alternative credit metrics, and AI explainability reports as standard portable JSON documents.
+
+### 3. Voice Companion & Assistant Voice BOT
+* **Speech Recognition Commands**: Interactive microphone Speech-to-Text allowing users to request credit analysis, verify parameters, or run updates.
+* **Interactive Multilingual Voice Playback**: Integrated regional Text-to-Speech narration supporting Hindi, Tamil, Telugu, and English, giving clear audio cues for Indian demographics.
 
 ---
 

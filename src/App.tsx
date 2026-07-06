@@ -7,7 +7,8 @@ import DecisionAI from './components/DecisionAI.tsx';
 import VoiceBotAssistant from './components/VoiceBotAssistant.tsx';
 import { CustomerProfile, LeadAnalysisResponse, Transaction } from './types.ts';
 import { INITIAL_CUSTOMERS } from './data.ts';
-import { ShieldCheck, Plus, Sparkles, HelpCircle, Edit3, Trash2, ArrowRight, CheckCircle, Landmark, TableProperties } from 'lucide-react';
+import { ShieldCheck, Plus, Sparkles, HelpCircle, Edit3, Trash2, ArrowRight, CheckCircle, Landmark, TableProperties, Download, TrendingUp } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export default function App() {
   const [customers, setCustomers] = useState<CustomerProfile[]>(INITIAL_CUSTOMERS);
@@ -20,6 +21,9 @@ export default function App() {
   const [accessibleMode, setAccessibleMode] = useState(false);
   const [lowLiteracyMode, setLowLiteracyMode] = useState(false);
   const [audioSpeechEnabled, setAudioSpeechEnabled] = useState(false);
+
+  // Checkbox selections for batch delete
+  const [selectedTxIds, setSelectedTxIds] = useState<string[]>([]);
 
   // Dialog forms for inline transaction additions
   const [showAddTxInput, setShowAddTxInput] = useState(false);
@@ -77,6 +81,7 @@ export default function App() {
   useEffect(() => {
     if (selectedCustomerId) {
       fetchAnalysis(selectedCustomerId);
+      setSelectedTxIds([]);
     }
   }, [selectedCustomerId]);
 
@@ -155,7 +160,95 @@ export default function App() {
     });
 
     setCustomers(updatedCustomers);
+    setSelectedTxIds(prev => prev.filter(id => id !== txId));
     fetchAnalysis(activeCustomer.id, updatedCustomers);
+  };
+
+  // Batch delete transaction handler
+  const handleBatchDelete = () => {
+    if (!activeCustomer || selectedTxIds.length === 0) return;
+
+    const filtered = activeCustomer.transactions.filter(t => !selectedTxIds.includes(t.id));
+    const updatedCustomers = customers.map(c => {
+      if (c.id === activeCustomer.id) {
+        return { ...c, transactions: filtered };
+      }
+      return c;
+    });
+
+    setCustomers(updatedCustomers);
+    setSelectedTxIds([]);
+    fetchAnalysis(activeCustomer.id, updatedCustomers);
+
+    if (audioSpeechEnabled && window.speechSynthesis) {
+      const u = new SpeechSynthesisUtterance(`Batch deleted selected simulated transactions. Re-appraising credit limit...`);
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  // Download Report JSON File Handler
+  const handleDownloadReport = () => {
+    if (!activeCustomer) return;
+    const reportData = {
+      generatedAt: new Date().toISOString(),
+      track: "Alternative Credit Appraisal Engine (UPI-Powered Behavioral Underwriting)",
+      customerProfile: {
+        id: activeCustomer.id,
+        name: activeCustomer.name,
+        role: activeCustomer.role,
+        age: activeCustomer.age,
+        location: activeCustomer.location,
+        gender: activeCustomer.gender,
+        phone: activeCustomer.phone,
+        email: activeCustomer.email,
+        creditHistory: activeCustomer.creditHistory
+      },
+      simulatedTransactions: activeCustomer.transactions,
+      underwritingAnalysis: analysis
+    };
+
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(reportData, null, 2)
+    )}`;
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', jsonString);
+    downloadAnchor.setAttribute('download', `IDBI_SmartLead_Report_${activeCustomer.name.replace(/\s+/g, '_')}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  // Get monthly velocity data for Recharts sparkline
+  const getMonthlyVelocityData = () => {
+    if (!activeCustomer) return [];
+    const monthlyMap: Record<string, { monthName: string; totalAmount: number; count: number }> = {};
+    
+    // Sort transactions by date chronologically
+    const sortedTxns = [...activeCustomer.transactions].sort((a, b) => a.date.localeCompare(b.date));
+    
+    sortedTxns.forEach(tx => {
+      const ym = tx.date.substring(0, 7) || '2026-06';
+      const parts = ym.split('-');
+      const year = parts[0] ? parts[0].substring(2) : '';
+      const monthVal = parseInt(parts[1] || '1', 10);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const formattedMonth = parts[1] ? `${monthNames[monthVal - 1]} '${year}` : ym;
+
+      if (!monthlyMap[ym]) {
+        monthlyMap[ym] = { monthName: formattedMonth, totalAmount: 0, count: 0 };
+      }
+      monthlyMap[ym].totalAmount += tx.amount;
+      monthlyMap[ym].count += 1;
+    });
+
+    return Object.keys(monthlyMap)
+      .sort()
+      .map(ym => ({
+        key: ym,
+        name: monthlyMap[ym].monthName,
+        volume: monthlyMap[ym].totalAmount,
+        count: monthlyMap[ym].count,
+      }));
   };
 
   return (
@@ -281,6 +374,17 @@ export default function App() {
                       <TableProperties className="h-4 w-4 text-emerald-500" />
                       <span>Sandbox Playbook: Edit Live Streams</span>
                     </h3>
+                    {activeCustomer && (
+                      <button
+                        onClick={handleDownloadReport}
+                        aria-label="Download current underwriting analysis report as JSON"
+                        className="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-md text-[10px] font-bold flex items-center space-x-1 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        title="Download analysis report as JSON"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        <span>Download Report</span>
+                      </button>
+                    )}
                   </div>
 
                   <p className="text-[11px] text-slate-500 mb-4 font-sans leading-relaxed">
@@ -395,30 +499,136 @@ export default function App() {
                     </form>
                   )}
 
+                  {/* Monthly Velocity Trend Chart */}
+                  {activeCustomer && (
+                    <div className="mt-4 p-3 bg-slate-50/70 border border-slate-200/50 rounded-xl">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1">
+                          <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />
+                          <span>Monthly Transaction Velocity</span>
+                        </h4>
+                      </div>
+                      <div className="h-24 w-full mt-1.5" id="sandbox_sparkline_chart">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={getMonthlyVelocityData()} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                            <XAxis 
+                              dataKey="name" 
+                              tick={{ fontSize: 8, fill: '#64748b' }} 
+                              axisLine={false} 
+                              tickLine={false} 
+                            />
+                            <YAxis 
+                              tick={{ fontSize: 8, fill: '#64748b' }} 
+                              axisLine={false} 
+                              tickLine={false} 
+                            />
+                            <Tooltip 
+                              contentStyle={{ fontSize: '9px', borderRadius: '6px', padding: '4px' }}
+                              formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Velocity']}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="volume" 
+                              stroke="#4f46e5" 
+                              strokeWidth={2} 
+                              dot={{ r: 2.5 }} 
+                              activeDot={{ r: 4 }} 
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Micro transaction manager listing */}
                   {activeCustomer && (
-                    <div className="mt-4 pt-3 border-t border-slate-200/60 max-h-40 overflow-y-auto space-y-2" id="playground_tx_list">
-                      {activeCustomer.transactions.map((tx) => (
-                        <div key={tx.id} className="flex items-center justify-between text-[11px] bg-slate-50/60 hover:bg-slate-50 p-2 rounded-lg border border-slate-200/30">
-                          <div className="truncate pr-2">
-                            <span className="font-semibold text-slate-700 block truncate">{tx.description}</span>
-                            <span className="text-[9px] text-slate-400 capitalize font-mono block mt-0.5">{tx.category} • {tx.mode}</span>
-                          </div>
-                          <div className="flex items-center space-x-2 shrink-0">
-                            <span className={`font-mono font-bold ${tx.type === 'credit' ? 'text-emerald-600' : 'text-slate-500'}`}>
-                              {tx.type === 'credit' ? '+' : '-'}₹{tx.amount}
-                            </span>
-                            <button
-                              onClick={() => handleDeleteTransaction(tx.id)}
-                              className="text-slate-300 hover:text-rose-500 transition cursor-pointer p-1 rounded hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                              title={`Delete simulated transaction ${tx.description}`}
-                              aria-label={`Delete simulated transaction ${tx.description}`}
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
-                          </div>
+                    <div className="mt-4 pt-3 border-t border-slate-200/60" id="playground_tx_list_container">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                          Simulated Streams ({activeCustomer.transactions.length})
+                        </span>
+                        {selectedTxIds.length > 0 && (
+                          <button
+                            onClick={handleBatchDelete}
+                            className="text-[10px] font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-lg transition-all flex items-center space-x-1 cursor-pointer"
+                            aria-label={`Batch delete ${selectedTxIds.length} selected transactions`}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete Selected ({selectedTxIds.length})</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {activeCustomer.transactions.length > 0 && (
+                        <div className="flex items-center space-x-2 pb-2 border-b border-slate-100 mb-2">
+                          <input
+                            type="checkbox"
+                            id="select_all_tx_checkbox"
+                            checked={selectedTxIds.length === activeCustomer.transactions.length && activeCustomer.transactions.length > 0}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedTxIds(activeCustomer.transactions.map(t => t.id));
+                              } else {
+                                setSelectedTxIds([]);
+                              }
+                            }}
+                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer"
+                            aria-label="Select all simulated transactions"
+                          />
+                          <label htmlFor="select_all_tx_checkbox" className="text-[10px] text-slate-500 font-semibold cursor-pointer">
+                            Select All
+                          </label>
                         </div>
-                      ))}
+                      )}
+
+                      <div className="max-h-40 overflow-y-auto space-y-2" id="playground_tx_list">
+                        {activeCustomer.transactions.length === 0 ? (
+                          <div className="text-center py-4 text-xs text-slate-400 font-sans">No transactions available. Simulate a transaction above to start.</div>
+                        ) : (
+                          activeCustomer.transactions.map((tx) => {
+                            const isTxSelected = selectedTxIds.includes(tx.id);
+                            return (
+                              <div key={tx.id} className={`flex items-center justify-between text-[11px] p-2 rounded-lg border transition-all ${
+                                isTxSelected ? 'bg-indigo-50/40 border-indigo-200' : 'bg-slate-50/60 hover:bg-slate-50 border-slate-200/30'
+                              }`}>
+                                <div className="flex items-center space-x-2 truncate pr-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={isTxSelected}
+                                    onChange={(e) => {
+                                      if (e.target.checked) {
+                                        setSelectedTxIds(prev => [...prev, tx.id]);
+                                      } else {
+                                        setSelectedTxIds(prev => prev.filter(id => id !== tx.id));
+                                      }
+                                    }}
+                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer"
+                                    aria-label={`Select transaction ${tx.description}`}
+                                  />
+                                  <div className="truncate">
+                                    <span className="font-semibold text-slate-700 block truncate">{tx.description}</span>
+                                    <span className="text-[9px] text-slate-400 capitalize font-mono block mt-0.5">{tx.category} • {tx.mode}</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2 shrink-0">
+                                  <span className={`font-mono font-bold ${tx.type === 'credit' ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    {tx.type === 'credit' ? '+' : '-'}₹{tx.amount}
+                                  </span>
+                                  <button
+                                    onClick={() => handleDeleteTransaction(tx.id)}
+                                    className="text-slate-300 hover:text-rose-500 transition cursor-pointer p-1 rounded hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                                    title={`Delete simulated transaction ${tx.description}`}
+                                    aria-label={`Delete simulated transaction ${tx.description}`}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
                     </div>
                   )}
 
