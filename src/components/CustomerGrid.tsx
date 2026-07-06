@@ -307,6 +307,8 @@ export default function CustomerGrid({
                   : 'bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
               }`}
               id={`select_user_${cust.id}`}
+              aria-label={`Select profile of ${cust.name}, ${cust.role}, Age ${cust.age}, from ${friendlyLocation(cust.location)}. ${isSelected ? 'Currently selected' : 'Press to select.'}`}
+              aria-pressed={isSelected}
             >
               <div className="flex items-center justify-between mb-2">
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
@@ -344,7 +346,16 @@ export default function CustomerGrid({
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Drag and drop bank statement files to upload. Supports CSV, JSON, and Text formats. Press Enter or Space to browse files."
+        className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
           dragActive
             ? 'border-indigo-500 bg-indigo-50/30'
             : 'border-slate-200 hover:border-indigo-400 hover:bg-slate-50/50'

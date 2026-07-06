@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Node.js Full-Stack App (Vite Frontend + Express Server Proxy)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: idbi_smartlead_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - backend
+    restart: always
+
+  # Python FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idbi_smartlead_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_MODE=production
+    restart: always

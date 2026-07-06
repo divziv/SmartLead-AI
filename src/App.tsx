@@ -290,55 +290,64 @@ export default function App() {
                   {!showAddTxInput ? (
                     <button
                       onClick={() => setShowAddTxInput(true)}
-                      className="w-full bg-slate-50 border border-slate-200/80 text-slate-700 hover:bg-slate-100 text-xs font-semibold p-2.5 rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer"
+                      aria-label="Simulate New UPI Transaction"
+                      className="w-full bg-slate-50 border border-slate-200/80 text-slate-700 hover:bg-slate-100 text-xs font-semibold p-2.5 rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                       <Plus className="h-4 w-4" />
                       <span>Simulate New UPI Transaction</span>
                     </button>
                   ) : (
-                    <form onSubmit={handleAddTransaction} className="space-y-3 bg-slate-50 border border-slate-200/55 rounded-xl p-4 animate-fade-in text-xs">
+                    <form onSubmit={handleAddTransaction} className="space-y-3 bg-slate-50 border border-slate-200/55 rounded-xl p-4 animate-fade-in text-xs" aria-label="Simulate new transaction entry form">
                       <div>
-                        <label className="block text-[10px] text-slate-500 mb-0.5">Description Narrative</label>
+                        <label className="block text-[10px] text-slate-500 mb-0.5" htmlFor="tx_desc_input">Description Narrative</label>
                         <input
+                          id="tx_desc_input"
                           type="text"
                           required
                           value={txDesc}
                           onChange={e => setTxDesc(e.target.value)}
                           placeholder="e.g. Swiggy Weekly Settlement"
-                          className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-sans"
+                          aria-label="Transaction description narrative"
+                          className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="block text-[10px] text-slate-500 mb-0.5">Flow Type</label>
+                          <label className="block text-[10px] text-slate-500 mb-0.5" htmlFor="tx_flow_select">Flow Type</label>
                           <select
+                            id="tx_flow_select"
                             value={txType}
                             onChange={e => setTxType(e.target.value as any)}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-sans"
+                            aria-label="Transaction flow type, credit or debit"
+                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
                           >
                             <option value="debit">(-) Debit Expense</option>
                             <option value="credit">(+) Credit Income</option>
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[10px] text-slate-500 mb-0.5">Amount (₹)</label>
+                          <label className="block text-[10px] text-slate-500 mb-0.5" htmlFor="tx_amount_input">Amount (₹)</label>
                           <input
+                            id="tx_amount_input"
                             type="number"
                             required
                             min="1"
                             value={txAmount}
                             onChange={e => setTxAmount(Number(e.target.value))}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-mono font-bold"
+                            aria-label="Transaction amount in Rupees"
+                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-bold"
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="block text-[10px] text-slate-500 mb-0.5">Category</label>
+                          <label className="block text-[10px] text-slate-500 mb-0.5" htmlFor="tx_category_select">Category</label>
                           <select
+                            id="tx_category_select"
                             value={txCategory}
                             onChange={e => setTxCategory(e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-sans"
+                            aria-label="Transaction category"
+                            className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
                           >
                             <option value="Gig Settlement">Gig Settlement</option>
                             <option value="Salary">Salary Credit</option>
@@ -351,11 +360,13 @@ export default function App() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[10px] text-slate-500 mb-0.5">Mode</label>
+                          <label className="block text-[10px] text-slate-500 mb-0.5" htmlFor="tx_mode_select">Mode</label>
                           <select
+                            id="tx_mode_select"
                             value={txMode}
                             onChange={e => setTxMode(e.target.value as any)}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-sans"
+                            aria-label="Transaction payment mode"
+                            className="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
                           >
                             <option value="UPI">UPI</option>
                             <option value="NetBanking">NetBanking</option>
@@ -368,13 +379,15 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => setShowAddTxInput(false)}
-                          className="px-3 py-1.5 text-slate-500 hover:text-slate-800 font-sans"
+                          aria-label="Cancel simulating transaction"
+                          className="px-3 py-1.5 text-slate-500 hover:text-slate-800 font-sans focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg select-none duration-75"
+                          aria-label="Submit simulated transaction"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg select-none duration-75 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                         >
                           Register Flow
                         </button>
@@ -397,8 +410,9 @@ export default function App() {
                             </span>
                             <button
                               onClick={() => handleDeleteTransaction(tx.id)}
-                              className="text-slate-300 hover:text-rose-500 transition cursor-pointer"
-                              title="Delete transaction entry"
+                              className="text-slate-300 hover:text-rose-500 transition cursor-pointer p-1 rounded hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                              title={`Delete simulated transaction ${tx.description}`}
+                              aria-label={`Delete simulated transaction ${tx.description}`}
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>

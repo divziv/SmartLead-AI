@@ -1,108 +1,109 @@
-# IDBI SmartLead AI 🚀
-### AI-Powered Behavioral Lending & Financial Inclusion Platform
-
-**Tagline:** *From Transactions to Trust.*  
-**IDBI Innovate 2026 Hackathon - Winning Submission under Track 02: Lead Generation – Behavioural Analytics – Retail Lending.**
-
-IDBI SmartLead AI is an advanced, audit-ready full-stack credit appraisal system that transforms raw UPI transaction streams into credit-worthy leads for retail loans (Home, Auto, Personal, and Education Loans). 
-
-Our primary mission is **Financial Inclusion**. By analyzing behavioral credit footprinting instead of relying on legacy bureau histories, we open access to under-served segments such as **Students, Freelancers, Gig Workers (Delivery executives, couriers), and Seasonal Farmers** with safe, transparent, and explainable lending metrics.
+# IDBI SmartLead AI Platform
+> **Where Banking Meets The Future Of FinTech • Inclusive Credit Scoring for Indian Demographics**
 
 ---
 
-## 🎨 Visual Identity & Key Value Pillars
+## 📌 Project Overview & Tagline
+**"Unlocking Credit for the Next Billion: UPI-Powered Behavioral Underwriting & Accessible Voice-Enabled Banking."**
 
-- **Income Intelligence Module:** Automatically estimates actual monthly earnings from unstructured UPI inflow markers, gig payout logs (Swiggy, Zomato), and agricultural mandi receipts.
-- **Behavioral Scoring Core:** Calculates spending speed, savings retention rate, mutual-fund investment maturity, and EMI discipline markers based on direct digital signals.
-- **Explainable AI (XAI) & SHAP Dashboard:** Replaces opaque blackbar decisions with transparent feature attributions mapping positive/negative contributions to RM and policy makers.
-- **Inclusion Engines (Wildcard Segments):** Unique underwriting scores such as the **Student Credit Potential Score™** and gig cashflow estimators.
-- **Ethical Audit & Bias Detection:** Audits decisions in real-time to confirm zero discrimination based on age, gender, or location PIN codes.
-- **Voice-First Accessibility:** Built-in Speech-to-Text and Text-to-Speech assistants supporting **regional Indian dialects (English, Hindi, Telugu, Tamil, Bengali)**, rephrasing technical jargon for elderly and low-literate users.
+**IDBI SmartLead AI** is a state-of-the-art fintech credit decisioning platform engineered for the **IDBI Innovate Hackathon 2026**. It appraises underserved micro-segments (including Gig Workers, Farmers, Independent Freelancers, and Students) by parsing live or synthetic UPI transaction streams to build robust alternative credit profiles. It uses Gemini AI for explainable decisioning, paired with high-performance Python microservices and accessible frontends.
 
 ---
 
-## 🏗️ Folder Directory Structure
+## 🏗️ System Architecture
+The platform is designed following strict separation of concerns to guarantee high scalability, performance, and audit-ready credit appraisal.
 
-```text
-/
-├── server.ts              # Full-stack Express Hub with Vite dev middleware & Gemini AI gateway
-├── package.json           # Node configuration holding dev dependencies and build scripts
-├── README.md              # Project documentation and setup guides
-├── metadata.json          # AI Studio app permissions metadata
-├── tsconfig.json          # TypeScript compiler requirements
-├── index.html             # Application entry template
-├── src/
-│   ├── App.tsx            # Main parent state dashboard & sandbox managers
-│   ├── types.ts           # Shared typed data structures and interfaces
-│   ├── data.ts            # Detailed synthetic transaction rosters for typical segments
-│   ├── index.css          # Global CSS importing Inter & JetBrains Mono fonts and Tailwind
-│   └── components/
-│       ├── Header.tsx             # Navbar with accessibility control toggles
-│       ├── CustomerGrid.tsx       # Profile manager & statement file drag-and-drop zone
-│       ├── FinancialAnalysis.tsx  # Income calculators with responsive category bar charts
-│       ├── BehavioralProfile.tsx  # Character assessment metric scores
-│       ├── DecisionAI.tsx         # XAI SHAP attribution charts and ethical audits
-│       └── VoiceBotAssistant.tsx  # Multilingual voice chat bot supporting regional tongues
+```
+                  ┌──────────────────────────────────────────┐
+                  │          Standard Web Client /           │
+                  │        Assistive Screen Readers          │
+                  └─────────────────────┬────────────────────┘
+                                        │ (Port 3000)
+                                        ▼
+                  ┌──────────────────────────────────────────┐
+                  │     Node.js Fullstack Service            │
+                  │   - Vite Static Frontend Files           │
+                  │   - Express API Route Controllers        │
+                  └──────┬────────────────────────────┬──────┘
+                         │                            │
+      (Proxy Credit API) │ (Port 8000)                │ (Gemini API Call)
+                         ▼                            ▼
+  ┌──────────────────────────────┐            ┌──────────────┐
+  │   FastAPI Python Backend     │            │  Gemini AI   │
+  │  - Numerical Credit Engine   │            │  Model API   │
+  │  - Predictive Modeling       │            │  (Explain)   │
+  └──────────────────────────────┘            └──────────────┘
 ```
 
----
+1. **Frontend Presentation Layer (React + Vite)**:
+   - Clean, lightweight, ultra-responsive single-screen application styled with **Tailwind CSS**.
+   - Accessible UI with keyboard nav states, Speech-to-Text inputs, and dynamic multi-language visual themes.
+   
+2. **Gateway Server & Controller (Express + Node)**:
+   - Routes requests, manages security/API keys (such as `GEMINI_API_KEY`), and handles transaction ingestion.
+   - Compiles down to an optimized production-grade single CJS executable (`dist/server.cjs`).
 
-## 🔌 API Gateway Specifications
+3. **Analytics Microservice Backend (Python + FastAPI)**:
+   - High-speed calculations of financial metrics and alternative underwriting.
+   - Provides REST APIs for simulation data and credit model evaluations.
 
-All endpoints are hosted locally under the active Express container server:
-
-### 1. `GET /api/customers`
-Returns a list of sandboxed customer accounts with raw ledger statement profiles.
-
-### 2. `POST /api/customers`
-Inserts and builds custom pilot profiles with simulated statements into the cash-cache, allowing relationship managers to playground-test custom wildcards.
-
-### 3. `POST /api/analyze`
-Accepts a `{ customerId }` and evaluates credit capacity. It launches a hybrid underwriting model: deterministic metrics are evaluated instantly locally, then paired with `gemini-3.5-flash` to enrich decision rationales, generate natural XAI SHAP reasons, and regional welcome responses.
-
-### 4. `POST /api/assistant/chat`
-Powers the companion chatbot dialogue. Translates technical loan details into plain layman definitions based on the target customer group, outputs answers directly to specified Indian languages (English, Hindi, Telugu, Tamil, Bengali).
+4. **Transient Database (Mock Ledger Memory Store)**:
+   - Live transaction histories and customer states are retained locally or persist inside standard structured in-memory lists, allowing safe credit modification simulations in real-time.
 
 ---
 
-## 💻 Local Quickstart Guide
+## 🛠️ Tech Stack Summary
 
-This application has been meticulously designed following **strict cost and isolation constraints** (works completely on local laptops, free utilities, no credit cards required, zero background database fees, SQLite/Local cache compliant).
+| Layer | Technology | Key Capabilities |
+| :--- | :--- | :--- |
+| **Frontend UI** | **React 19 & Vite 6** | Modern hooks, swift bundles, and fully accessible component lifecycle. |
+| **Styling** | **Tailwind CSS v4** | Fluid grid layouts, typography pairs, and custom dark mode accents. |
+| **Microserver** | **Express (Node.js)** | Dynamic static file servers and API key proxies. |
+| **Calculations** | **FastAPI (Python 3.11)** | High-speed risk tier evaluations and score modifications. |
+| **AI Processing** | **Google GenAI SDK** | Model selection, multi-language prompt guides, and automated report building. |
+| **Containerization** | **Docker & Docker Compose** | Isolated execution environments and cross-service configurations. |
 
-### Prerequisite
-Confirm you have Node.js (v18+) and npm installed on your machine.
+---
 
-### Installation
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Configure your Gemini API key inside our `.env.example` file or your shell variables:
-   ```bash
-   export GEMINI_API_KEY="your_api_key_here"
-   ```
-   *(Note: Overwriting is optional. If the key is omitted, our robust local deterministic underwriting algorithm takes over automatically to ensure 105% system availability).*
+## 🐳 Running the Platform with Docker
 
-### Development Start
-Launch the full-stack development workspace on Port 3000:
+Follow these simple steps to orchestrate the multi-container setup:
+
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) installed.
+- [Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+### 1. Configure Secrets
+Create a `.env` file in the root directory (or use standard environment injects):
+```env
+GEMINI_API_KEY="your_actual_gemini_api_key_here"
+```
+
+### 2. Launch the Orchestrated Containers
+From the root directory, run:
 ```bash
-npm run dev
+docker-compose up --build
 ```
 
-### Production Build compilation
-Verify structural code integrity and bundle production assets:
-```bash
-npm run build
-```
-Start the compiled production node server on Port 3000:
-```bash
-npm run start
-```
+This command automatically:
+- Builds the **Node.js/Vite full-stack application** and starts it on port `3000`.
+- Builds the **Python FastAPI microservice container** and starts it on port `8000`.
+
+### 3. Verify Container Status
+| Service | Endpoint | Purpose |
+| :--- | :--- | :--- |
+| **Frontend / Web Console** | [http://localhost:3000](http://localhost:3000) | Live interactive dashboard and simulation sandbox. |
+| **Python API Service** | [http://localhost:8000/docs](http://localhost:8000/docs) | Interactive Swagger documentation for credit microservices. |
 
 ---
 
-## 🧼 Ethics, Transparency & Design Philosophy
+## ♿ Accessibility & Inclusion Features (WCAG 2.1 Compliant)
+We have engineered **Inclusion First** into our UI, allowing individuals with diverse abilities to safely browse, understand, and simulate alternative credit streams:
 
-- **Color-Blind Friendly Support Theme:** By default, financial interfaces risk alienating color-blind users by relying strictly on red-vs-green circles. SmartLead replaces them with multi-cue checkforms, labels, distinct geometric shapes, and deep high-contrast blue indicators.
-- **Low-Literacy Modes:** Decouples complex banking terms (e.g. *Debt-to-Income / Savings Ratio*) into warm plain-English advice (e.g. *"Your monthly loan load footprint"*), enabling rural and youth financial literacy.
-- **Responsible Bias Checks:** Validates score distributions to verify geolocational or age metrics do not bias credit appraisal checks, supporting safe, non-discriminatory lending practices.
+1. **Robust Heading Hierarchy**: Strict structural progression from `h1` through `h3` tags to assist screen reader anchors.
+2. **Keyboard-Navigable Focus States**: Explicit `focus:ring-2 focus:ring-indigo-500` outline loops on all interactive grid components, select toggles, input boxes, and dropdown menus.
+3. **Descriptive ARIA Labels**: Complete annotations (`aria-label`, `aria-pressed`, `aria-selected`, `htmlFor` association tags) on all buttons, forms, and custom state changers.
+4. **Custom Voice Guidance Switch**: Built-in Text-to-Speech (TTS) narrating real-time score modifications and active selections aloud.
+5. **Color-Blind Protective Contrast mode**: Replaces Red-vs-Green alerts with high-contrast indicator blues and safe descriptive flags.
+6. **Simplified Explanatory Mode (Low Literacy Support)**: Rephrases specialized terms like "debt-to-income ratios" into simple, actionable language.
+7. **Speech-to-Text Voice Commands**: Complete microphone SpeechRecognition allowing users to ask questions using their natural voice.

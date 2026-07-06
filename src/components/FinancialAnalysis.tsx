@@ -213,7 +213,8 @@ export default function FinancialAnalysis({
             <select
               value={filterCategory}
               onChange={e => setFilterCategory(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-lg text-[10px] p-1 focus:ring-1 focus:ring-indigo-500 outline-none font-sans font-medium"
+              aria-label="Filter transaction logs by category"
+              className="bg-slate-50 border border-slate-200 rounded-lg text-[10px] p-1 focus:ring-2 focus:ring-indigo-500 outline-none font-sans font-medium focus:outline-none"
             >
               {uniqueCategories.map(cat => (
                 <option key={cat} value={cat}>

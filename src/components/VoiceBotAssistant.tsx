@@ -199,7 +199,8 @@ export default function VoiceBotAssistant({
           <select
             value={language}
             onChange={e => setLanguage(e.target.value as any)}
-            className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-1 focus:ring-indigo-500 font-sans font-medium"
+            aria-label="Select dialogue spoken language"
+            className="bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans font-medium focus:outline-none"
           >
             <option value="English">English</option>
             <option value="Hindi">Hindi / हिंदी</option>
@@ -264,19 +265,22 @@ export default function VoiceBotAssistant({
         <div className="flex items-center space-x-2 overflow-x-auto pb-3 scrollbar-none font-sans text-[10px]">
           <button
             onClick={() => setInputText("What are my customized offers?")}
-            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all"
+            aria-label="Ask assistant: What offers do I qualify for?"
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             "What offers do I qualify for?"
           </button>
           <button
             onClick={() => setInputText("Am I eligible for a home loan?")}
-            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all"
+            aria-label="Ask assistant: Am I eligible for a loan?"
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             "Am I eligible for a loan?"
           </button>
           <button
             onClick={() => setInputText("How does the system estimate my monthly earnings?")}
-            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all"
+            aria-label="Ask assistant: How do you calculate my income?"
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200/50 px-2.5 py-1 rounded-full whitespace-nowrap text-slate-600 font-medium transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             "How do you calculate my income?"
           </button>
@@ -287,7 +291,9 @@ export default function VoiceBotAssistant({
           <button
             type="button"
             onClick={toggleListening}
-            className={`p-3 rounded-xl border transition-all flex items-center justify-center shrink-0 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer ${
+            aria-label="Start voice typing using microphone"
+            aria-pressed={isListening}
+            className={`p-3 rounded-xl border transition-all flex items-center justify-center shrink-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer ${
               isListening
                 ? 'bg-rose-500/20 text-rose-600 border-rose-500 animate-pulse'
                 : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-slate-200'
@@ -303,13 +309,15 @@ export default function VoiceBotAssistant({
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             placeholder="Type your question or use Voice input..."
+            aria-label="Ask a question to IDBI SmartLead AI Companion"
             className="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
           />
 
           {/* Send buttons */}
           <button
             type="submit"
-            className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-indigo-505/10 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Send message"
+            className="p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-indigo-505/10 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             id="chat_send_button"
           >
             <Send className="h-4.5 w-4.5" />

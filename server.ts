@@ -40,6 +40,50 @@ function getGeminiClient(): GoogleGenAI | null {
   return ai;
 }
 
+// Robust retry and fallback content generation function to handle 503 and high-demand rate limit situations
+async function generateContentWithFallback(
+  gemini: GoogleGenAI,
+  parameters: {
+    model: string;
+    contents: any;
+    config?: any;
+  }
+): Promise<any> {
+  // Try the requested model first, then fall back to highly available alternative models
+  const modelsToTry = Array.from(new Set([parameters.model, "gemini-2.5-flash", "gemini-1.5-flash", "gemini-3.1-flash-lite"]));
+  let lastError: any = null;
+
+  for (const modelName of modelsToTry) {
+    let attempts = 0;
+    const maxAttempts = 2;
+    while (attempts < maxAttempts) {
+      try {
+        console.log(`Server: Requesting generateContent with model "${modelName}" (attempt ${attempts + 1})...`);
+        const response = await gemini.models.generateContent({
+          ...parameters,
+          model: modelName,
+        });
+        console.log(`Server: Successfully generated content using model "${modelName}".`);
+        return response;
+      } catch (err: any) {
+        lastError = err;
+        attempts++;
+        const errMsg = err?.message || String(err);
+        const isTransient = errMsg.includes("503") || errMsg.includes("UNAVAILABLE") || errMsg.includes("429") || errMsg.includes("RESOURCE_EXHAUSTED");
+
+        if (isTransient && attempts < maxAttempts) {
+          console.warn(`Server: Transient error (${errMsg}) with model "${modelName}". Retrying in 1s...`);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } else {
+          console.warn(`Server: Model "${modelName}" failed with error: ${errMsg}. Trying fallback if available.`);
+          break;
+        }
+      }
+    }
+  }
+  throw lastError;
+}
+
 // Ensure first test on start
 getGeminiClient();
 
@@ -323,7 +367,7 @@ Provide an enriched Expert AI evaluation in valid JSON. The JSON keys MUST exact
 Ensure to maintain compliance and avoid gender, location, or age discrimination during the credit underwriting process. Always provide safe, responsible lending recommendations. Return ONLY valid JSON, wrapped in markdown code blocks.
 `;
 
-    const response = await gemini.models.generateContent({
+    const response = await generateContentWithFallback(gemini, {
       model: "gemini-3.5-flash",
       contents: prompt,
       config: {
@@ -415,7 +459,7 @@ IMPORTANT INSTRUCTIONS:
 Print ONLY your direct textual reply in the requested language. Do not output metadata or system prefixes.
 `;
 
-    const response = await gemini.models.generateContent({
+    const response = await generateContentWithFallback(gemini, {
       model: "gemini-3.5-flash",
       contents: prompt,
       config: {

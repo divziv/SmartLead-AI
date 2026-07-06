@@ -50,12 +50,14 @@ export default function Header({
                 window.speechSynthesis.speak(utterance);
               }
             }}
-            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
               audioSpeechEnabled
                 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
                 : 'bg-slate-800 text-slate-400 border-transparent hover:bg-slate-700 hover:text-white'
             }`}
             title="Read results aloud (Text-to-Speech Accessibility)"
+            aria-label="Read results aloud. Text-to-speech accessibility."
+            aria-pressed={audioSpeechEnabled}
             id="accessibility_audio_btn"
           >
             <Volume2 className="h-4 w-4" />
@@ -72,12 +74,14 @@ export default function Header({
                 window.speechSynthesis.speak(u);
               }
             }}
-            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
               accessibleMode
                 ? 'bg-blue-500/20 text-blue-400 border-blue-500/50'
                 : 'bg-slate-800 text-slate-400 border-transparent hover:bg-slate-700 hover:text-white'
             }`}
             title="Color-blind safe indicators (Avoids Red-vs-Green conflicts)"
+            aria-label="Toggle color-blind friendly mode. Replaces red and green indicators."
+            aria-pressed={accessibleMode}
             id="accessibility_contrast_btn"
           >
             <Eye className="h-4 w-4" />
@@ -94,12 +98,14 @@ export default function Header({
                 window.speechSynthesis.speak(u);
               }
             }}
-            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+            className={`p-2 rounded-lg border transition-all flex items-center space-x-1 sm:space-x-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
               lowLiteracyMode
                 ? 'bg-amber-500/20 text-amber-400 border-amber-500/50'
                 : 'bg-slate-800 text-slate-400 border-transparent hover:bg-slate-700 hover:text-white'
             }`}
             title="Simplified terminology & descriptive tooltips for general accessibility"
+            aria-label="Toggle simplified mode. Rephrases complex financial terminology."
+            aria-pressed={lowLiteracyMode}
             id="accessibility_literacy_btn"
           >
             <HelpCircle className="h-4 w-4" />
